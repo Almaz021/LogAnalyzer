@@ -77,5 +77,21 @@ public class AdocFileWriter implements FileWriter {
                 + report.requestStatusCount().get(status) + ConstantStrings.NEW_LINE;
         }
         result += ConstantStrings.HEADER_SEPARATOR + ConstantStrings.NEW_LINE;
+
+
+
+        result +=
+            ConstantStrings.FIRST_DELIMITER + ConstantStrings.FIRST_DELIMITER + ConstantStrings.TYPES
+                + ConstantStrings.NEW_LINE;
+        result += ConstantStrings.ADOC_TABLE_START + ConstantStrings.NEW_LINE;
+        result += ConstantStrings.HEADER_SEPARATOR + ConstantStrings.NEW_LINE;
+        result += ConstantStrings.SECOND_DELIMITER + ConstantStrings.TYPE + ConstantStrings.SECOND_DELIMITER
+            + ConstantStrings.COUNT_COLUMN + ConstantStrings.NEW_LINE;
+        for (String key : report.requestTypeCount().keySet()) {
+            result += ConstantStrings.SECOND_DELIMITER + key + ConstantStrings.SECOND_DELIMITER
+                + report.requestTypeCount().get(key) + ConstantStrings.NEW_LINE;
+        }
+        result += ConstantStrings.HEADER_SEPARATOR + ConstantStrings.NEW_LINE;
+
     }
 }

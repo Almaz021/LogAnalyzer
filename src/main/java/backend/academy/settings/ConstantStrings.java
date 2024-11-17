@@ -28,4 +28,6 @@ public class ConstantStrings {
     public static final String TABLE_ROW_SEPARATOR = "|:---:|:---------------------:|-----------:|";
     public static final String MARKDOWN_HASH = "####";
     public static final String NA = "N/A";
+    public static final String TYPES = " Типы запросов";
+    public static final String TYPE = "Тип";
 }

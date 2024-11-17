@@ -6,7 +6,6 @@ import backend.academy.interfaces.FileWriter;
 import backend.academy.settings.ConstantStrings;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -19,21 +18,15 @@ public class MarkdownFileWriter implements FileWriter {
     @SuppressFBWarnings({"NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE", "PATH_TRAVERSAL_IN",
         "PRMC_POSSIBLY_REDUNDANT_METHOD_CALLS"})
     public void writeFile(String fileName, LogReport report) {
-        // Null check for the report object and its methods
         if (report == null) {
             throw new IllegalArgumentException("LogReport cannot be null");
         }
-
-        // Proceed to generate the file content
         generate(report);
 
-        // Normalize the file path to avoid path traversal vulnerabilities
-        Path path = Paths.get(fileName).normalize();  // Normalize path to prevent traversal
-
-        // Ensure that the parent directories exist
+        Path path = Paths.get(fileName).normalize();
         try {
-            Files.createDirectories(path.getParent());  // Create directories if they don't exist
-            Files.write(path, result.getBytes(StandardCharsets.UTF_8));  // Write content securely
+            Files.createDirectories(path.getParent());
+            Files.writeString(path, result);
         } catch (IOException e) {
             throw new RuntimeException("Error writing to file: " + fileName, e);
         }
@@ -95,6 +88,18 @@ public class MarkdownFileWriter implements FileWriter {
             result += ConstantStrings.SECOND_DELIMITER + entry.getKey() + ConstantStrings.SECOND_DELIMITER
                 + StatusCodeLookup.getDescription(Integer.parseInt((String) entry.getKey()))
                 + ConstantStrings.SECOND_DELIMITER
+                + entry.getValue() + ConstantStrings.SECOND_DELIMITER + ConstantStrings.NEW_LINE;
+        }
+
+        // Types Section
+        result += ConstantStrings.MARKDOWN_HASH + ConstantStrings.TYPES + ConstantStrings.NEW_LINE;
+        result += ConstantStrings.SECOND_DELIMITER + ConstantStrings.TYPE + ConstantStrings.SECOND_DELIMITER
+            + ConstantStrings.COUNT_COLUMN + ConstantStrings.SECOND_DELIMITER + ConstantStrings.NEW_LINE;
+        result += ConstantStrings.TABLE_HEADER_SEPARATOR + ConstantStrings.NEW_LINE;
+
+        for (Map.Entry<?, ?> entry : report.requestTypeCount() != null ? report.requestTypeCount().entrySet()
+            : Map.of().entrySet()) {
+            result += ConstantStrings.SECOND_DELIMITER + entry.getKey() + ConstantStrings.SECOND_DELIMITER
                 + entry.getValue() + ConstantStrings.SECOND_DELIMITER + ConstantStrings.NEW_LINE;
         }
     }
