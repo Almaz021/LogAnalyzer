@@ -1,10 +1,11 @@
 package backend.academy.parsers;
 
 import backend.academy.entities.LogRecord;
+import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.Locale;
 import lombok.RequiredArgsConstructor;
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
 
@@ -28,13 +29,13 @@ public class LogParser {
 
         LocalDate timeLocal = parseTime(secondSplit);
 
-        String request = parseByIndex(secondSplit, REQUEST_FIRST_INDEX)
-            + " " + parseByIndex(secondSplit, REQUEST_SECOND_INDEX)
-            + " " + parseByIndex(secondSplit, REQUEST_THIRD_INDEX);
+        String requestType = parseByIndex(secondSplit, REQUEST_FIRST_INDEX);
+        String requestResource = parseByIndex(secondSplit, REQUEST_SECOND_INDEX);
+        String requestHTTP = parseByIndex(secondSplit, REQUEST_THIRD_INDEX);
+        String[] request = {requestType, requestResource, requestHTTP};
 
         Integer status = Integer.valueOf(parseByIndex(secondSplit, STATUS_INDEX));
-
-        Integer bodyBytesSent = Integer.valueOf(parseByIndex(secondSplit, BODY_BYTES_SENT_INDEX));
+        BigDecimal bodyBytesSent = new BigDecimal(parseByIndex(secondSplit, BODY_BYTES_SENT_INDEX));
 
         String httpReferer = parseByIndex(secondSplit, HTTP_REFERER_INDEX);
 
@@ -56,19 +57,23 @@ public class LogParser {
     }
 
     public LocalDate parseTime(String[] line) {
-        String[] rawTimeLocal = parseByIndex(line, 1).split(":")[0].substring(1).split("/");
-        List<String> list = Arrays.asList(rawTimeLocal);
-        Collections.reverse(list);
-        rawTimeLocal = list.toArray(new String[0]);
-        String readyTimeLocal = String.join("-", rawTimeLocal);
-        return LocalDate.parse(readyTimeLocal, ISO_LOCAL_DATE);
+        String rawTimeLocal = parseByIndex(line, 1).split(":")[0].substring(1);
+        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd/MMM/yyyy", Locale.ENGLISH);
+
+        try {
+            LocalDate date = LocalDate.parse(rawTimeLocal, inputFormatter);
+            String formattedDate = date.format(DateTimeFormatter.ISO_LOCAL_DATE);
+            return LocalDate.parse(formattedDate, ISO_LOCAL_DATE);
+        } catch (DateTimeParseException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public String parseHttpUserAgent(String[] line) {
         StringBuilder httpUserAgentBuilder = new StringBuilder();
         for (int i = HTTP_USER_AGENT_START_INDEX; i < line.length; i++) {
             if (i != HTTP_USER_AGENT_START_INDEX) {
-                httpUserAgentBuilder.append(" ").append(parseByIndex(line, i));
+                httpUserAgentBuilder.append(' ').append(parseByIndex(line, i));
             } else {
                 httpUserAgentBuilder.append(parseByIndex(line, i));
             }
