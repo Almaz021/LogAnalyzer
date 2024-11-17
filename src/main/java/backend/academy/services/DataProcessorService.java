@@ -60,6 +60,7 @@ public class DataProcessorService {
     @SuppressFBWarnings("CLI_CONSTANT_LIST_INDEX")
     private void updateRequestTypeCount(LogRecord logRecord) {
         logReport.requestTypeCount().put(logRecord.request()[Settings.ZERO],
-            logReport.requestTypeCount().getOrDefault(logRecord.request()[Settings.ZERO], Settings.ZERO) + Settings.ONE);
+            logReport.requestTypeCount().getOrDefault(logRecord.request()[Settings.ZERO], Settings.ZERO)
+                + Settings.ONE);
     }
 }
