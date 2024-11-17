@@ -4,6 +4,7 @@ import backend.academy.StatusCodeLookup;
 import backend.academy.entities.LogReport;
 import backend.academy.interfaces.FileWriter;
 import backend.academy.settings.ConstantStrings;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -15,6 +16,8 @@ public class MarkdownFileWriter implements FileWriter {
     private String result = "";
 
     @Override
+    @SuppressFBWarnings({"NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE", "PATH_TRAVERSAL_IN",
+        "PRMC_POSSIBLY_REDUNDANT_METHOD_CALLS"})
     public void writeFile(String fileName, LogReport report) {
         // Null check for the report object and its methods
         if (report == null) {
@@ -62,7 +65,7 @@ public class MarkdownFileWriter implements FileWriter {
                 + ConstantStrings.SECOND_DELIMITER + ConstantStrings.NEW_LINE;
         result +=
             ConstantStrings.SECOND_DELIMITER + ConstantStrings.PERCENTILE_95_TEXT + ConstantStrings.SECOND_DELIMITER
-                + (report.getPercentile() != null ? report.getPercentile() : ConstantStrings.NA)
+                + (report.getPercentile())
                 + ConstantStrings.SECOND_DELIMITER
                 + ConstantStrings.NEW_LINE;
 

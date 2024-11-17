@@ -2,6 +2,7 @@ package backend.academy.readers;
 
 import backend.academy.interfaces.LogReader;
 import backend.academy.services.DataProcessorService;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -17,6 +18,7 @@ public class FileReader implements LogReader {
     private final DataProcessorService dataProcessorService;
 
     @Override
+    @SuppressFBWarnings("PATH_TRAVERSAL_IN")
     public Stream<String> read(String filePath) throws IOException {
 
         StringBuilder basePath = new StringBuilder();

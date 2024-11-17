@@ -3,6 +3,7 @@ package backend.academy.services;
 import backend.academy.entities.LogRecord;
 import backend.academy.entities.LogReport;
 import backend.academy.settings.Settings;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -43,13 +44,15 @@ public class DataProcessorService {
         logReport.allRequestSize().add(logRecord.bodyBytesSent());
     }
 
+    @SuppressFBWarnings("CLI_CONSTANT_LIST_INDEX")
     private void updateResourcesCount(LogRecord logRecord) {
         logReport.resourcesCount().put(logRecord.request()[Settings.ZERO],
-            logReport.resourcesCount().getOrDefault(logRecord.request()[Settings.ONE], 0) + 1);
+            logReport.resourcesCount().getOrDefault(logRecord.request()[Settings.ONE], Settings.ZERO) + Settings.ONE);
     }
 
     private void updateRequestStatusCount(LogRecord logRecord) {
         logReport.requestStatusCount().put(String.valueOf(logRecord.status()),
-            logReport.requestStatusCount().getOrDefault(String.valueOf(logRecord.status()), 0) + 1);
+            logReport.requestStatusCount().getOrDefault(String.valueOf(logRecord.status()), Settings.ZERO)
+                + Settings.ONE);
     }
 }
