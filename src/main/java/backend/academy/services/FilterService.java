@@ -16,4 +16,8 @@ public class FilterService {
             return logRecord.timeLocal().isBefore(date);
         }
     }
+
+    public boolean filterByValue(LogRecord logRecord, String s) {
+        return logRecord.httpUserAgent().contains(s);
+    }
 }

@@ -28,12 +28,11 @@ public class StartService {
     String format = "";
     LogReader reader;
     Stream<String> lines;
-
-
     FilterService filterService = new FilterService();
     LogParser parser = new LogParser();
     LocalDate finalFrom = from;
     LocalDate finalTo = to;
+    String additionalFilter = "";
 
     public void start() throws IOException {
 
@@ -66,6 +65,7 @@ public class StartService {
                 case "--from" -> from = LocalDate.parse(args[i + 1], ISO_LOCAL_DATE);
                 case "--to" -> to = LocalDate.parse(args[i + 1], ISO_LOCAL_DATE);
                 case "--format" -> format = args[i + 1];
+                case "--filter-value" -> additionalFilter = args[i + 1];
                 default -> throw new IllegalArgumentException("Unknown option: " + args[i]);
             }
         }
@@ -82,13 +82,18 @@ public class StartService {
     private void readLogs() {
         lines.forEach(o -> {
             LogRecord logRecord = parser.parse(o);
-            if (finalFrom != null && finalTo != null && filterService.filterByDate(logRecord, finalFrom, finalTo)) {
+            boolean flag = true;
+            if (!"".equals(additionalFilter)) {
+                flag = filterService.filterByValue(logRecord, additionalFilter);
+            }
+            if (flag && finalFrom != null && finalTo != null
+                && filterService.filterByDate(logRecord, finalFrom, finalTo)) {
                 update(logRecord);
-            } else if (finalFrom != null && filterService.filterByDate(logRecord, finalFrom, "from")) {
+            } else if (flag && finalFrom != null && filterService.filterByDate(logRecord, finalFrom, "from")) {
                 update(logRecord);
-            } else if (finalTo != null && filterService.filterByDate(logRecord, finalTo, "to")) {
+            } else if (flag && finalTo != null && filterService.filterByDate(logRecord, finalTo, "to")) {
                 update(logRecord);
-            } else if (finalFrom == null && finalTo == null) {
+            } else if (flag && finalFrom == null && finalTo == null) {
                 update(logRecord);
             } else {
                 printWriter.println("NOT ACCEPTED");

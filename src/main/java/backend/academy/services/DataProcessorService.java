@@ -20,6 +20,7 @@ public class DataProcessorService {
         updateSumAndAllRequestSize(logRecord);
         updateResourcesCount(logRecord);
         updateRequestStatusCount(logRecord);
+        updateRequestTypeCount(logRecord);
     }
 
     private void updateDate(LogRecord logRecord) {
@@ -46,7 +47,7 @@ public class DataProcessorService {
 
     @SuppressFBWarnings("CLI_CONSTANT_LIST_INDEX")
     private void updateResourcesCount(LogRecord logRecord) {
-        logReport.resourcesCount().put(logRecord.request()[Settings.ZERO],
+        logReport.resourcesCount().put(logRecord.request()[Settings.ONE],
             logReport.resourcesCount().getOrDefault(logRecord.request()[Settings.ONE], Settings.ZERO) + Settings.ONE);
     }
 
@@ -54,5 +55,11 @@ public class DataProcessorService {
         logReport.requestStatusCount().put(String.valueOf(logRecord.status()),
             logReport.requestStatusCount().getOrDefault(String.valueOf(logRecord.status()), Settings.ZERO)
                 + Settings.ONE);
+    }
+
+    @SuppressFBWarnings("CLI_CONSTANT_LIST_INDEX")
+    private void updateRequestTypeCount(LogRecord logRecord) {
+        logReport.requestTypeCount().put(logRecord.request()[Settings.ZERO],
+            logReport.requestTypeCount().getOrDefault(logRecord.request()[Settings.ZERO], Settings.ZERO) + Settings.ONE);
     }
 }

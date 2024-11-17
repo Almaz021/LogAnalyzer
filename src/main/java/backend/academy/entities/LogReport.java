@@ -23,6 +23,7 @@ public class LogReport {
     private List<BigDecimal> allRequestSize = new ArrayList<>();
     private Map<String, Integer> resourcesCount = new HashMap<>();
     private Map<String, Integer> requestStatusCount = new HashMap<>();
+    private Map<String, Integer> requestTypeCount = new HashMap<>();
 
     public BigDecimal getAverageRequestSize() {
         return sumRequestSize.divide(new BigDecimal(requestCount), RoundingMode.FLOOR);
