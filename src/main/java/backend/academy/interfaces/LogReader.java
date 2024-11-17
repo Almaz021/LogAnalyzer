@@ -1,5 +1,8 @@
 package backend.academy.interfaces;
 
+import java.io.IOException;
+import java.util.stream.Stream;
+
 public interface LogReader {
-    void read(String path);
+    Stream<String> read(String path) throws IOException;
 }
