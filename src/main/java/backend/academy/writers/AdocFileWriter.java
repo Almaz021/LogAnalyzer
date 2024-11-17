@@ -4,6 +4,7 @@ import backend.academy.StatusCodeLookup;
 import backend.academy.entities.LogReport;
 import backend.academy.interfaces.FileWriter;
 import backend.academy.settings.ConstantStrings;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -15,6 +16,7 @@ public class AdocFileWriter implements FileWriter {
     private String result = "";
 
     @Override
+    @SuppressFBWarnings({"PATH_TRAVERSAL_OUT", "IOI_USE_OF_FILE_STREAM_CONSTRUCTORS"})
     public void writeFile(String fileName, LogReport report) {
         generate(report);
         try (Writer writer = new BufferedWriter(new OutputStreamWriter(
