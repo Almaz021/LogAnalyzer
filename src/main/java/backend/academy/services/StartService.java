@@ -30,8 +30,6 @@ public class StartService {
     Stream<String> lines;
     FilterService filterService = new FilterService();
     LogParser parser = new LogParser();
-    LocalDate finalFrom = from;
-    LocalDate finalTo = to;
     String additionalFilter = "";
 
     public void start() throws IOException {
@@ -86,14 +84,14 @@ public class StartService {
             if (!"".equals(additionalFilter)) {
                 flag = filterService.filterByValue(logRecord, additionalFilter);
             }
-            if (flag && finalFrom != null && finalTo != null
-                && filterService.filterByDate(logRecord, finalFrom, finalTo)) {
+            if (flag && from != null && to != null
+                && filterService.filterByDate(logRecord, from, to)) {
                 update(logRecord);
-            } else if (flag && finalFrom != null && filterService.filterByDate(logRecord, finalFrom, "from")) {
+            } else if (flag && from != null && to == null && filterService.filterByDate(logRecord, from, "from")) {
                 update(logRecord);
-            } else if (flag && finalTo != null && filterService.filterByDate(logRecord, finalTo, "to")) {
+            } else if (flag && to != null && from == null && filterService.filterByDate(logRecord, to, "to")) {
                 update(logRecord);
-            } else if (flag && finalFrom == null && finalTo == null) {
+            } else if (flag && from == null && to == null) {
                 update(logRecord);
             } else {
                 printWriter.println("NOT ACCEPTED");
