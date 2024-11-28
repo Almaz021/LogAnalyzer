@@ -4,6 +4,7 @@ import backend.academy.entities.LogRecord;
 import backend.academy.entities.LogReport;
 import backend.academy.settings.Settings;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -24,15 +25,12 @@ public class DataProcessorService {
     }
 
     private void updateDate(LogRecord logRecord) {
-        if (logReport.startDate() == null && logReport.endDate() == null) {
-            logReport.startDate(logRecord.timeLocal());
-            logReport.endDate(logRecord.timeLocal());
+        LocalDate timeLocal = logRecord.timeLocal();
+        if (logReport.startDate() == null || logReport.startDate().isAfter(timeLocal)) {
+            logReport.startDate(timeLocal);
         }
-        if (logReport.startDate() != null && logReport.startDate().isAfter(logRecord.timeLocal())) {
-            logReport.startDate(logRecord.timeLocal());
-        }
-        if (logReport.endDate() != null && logReport.endDate().isBefore(logRecord.timeLocal())) {
-            logReport.endDate(logRecord.timeLocal());
+        if (logReport.endDate() == null || logReport.endDate().isBefore(timeLocal)) {
+            logReport.endDate(timeLocal);
         }
     }
 
