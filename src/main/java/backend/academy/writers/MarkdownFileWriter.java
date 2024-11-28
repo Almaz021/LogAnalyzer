@@ -47,33 +47,43 @@ public class MarkdownFileWriter implements FileWriter {
 
     private String generateGeneralInfoSection(LogReport report) {
         StringBuilder infoSection = new StringBuilder();
-        infoSection.append(ConstantStrings.HEADER_MD.formatted(ConstantStrings.GENERAL_INFO_HEADER.formatted("\n")));
-        infoSection.append(ConstantStrings.TABLE_ROW_MD.formatted(ConstantStrings.METRIC_TABLE_HEADER, "\n"));
+        infoSection.append(ConstantStrings.HEADER_MD.formatted(
+            ConstantStrings.GENERAL_INFO_HEADER.formatted(ConstantStrings.NEW_LINE)));
+        infoSection.append(
+            ConstantStrings.TABLE_ROW_MD.formatted(ConstantStrings.METRIC_TABLE_HEADER, ConstantStrings.NEW_LINE));
         infoSection.append(ConstantStrings.TABLE_ALIGNMENT_MD);
         infoSection.append(
-            ConstantStrings.TABLE_ROW_MD.formatted(ConstantStrings.FILES_METRIC, "\n").formatted(report.files()));
+            ConstantStrings.TABLE_ROW_MD.formatted(ConstantStrings.FILES_METRIC, ConstantStrings.NEW_LINE)
+                .formatted(report.files()));
         infoSection.append(
-            ConstantStrings.TABLE_ROW_MD.formatted(ConstantStrings.START_DATE_METRIC, "\n")
+            ConstantStrings.TABLE_ROW_MD.formatted(ConstantStrings.START_DATE_METRIC, ConstantStrings.NEW_LINE)
                 .formatted(report.startDate()));
         infoSection.append(
-            ConstantStrings.TABLE_ROW_MD.formatted(ConstantStrings.END_DATE_METRIC, "\n").formatted(report.endDate()));
-        infoSection.append(ConstantStrings.TABLE_ROW_MD.formatted(ConstantStrings.REQUEST_COUNT_METRIC, "\n")
-            .formatted(report.requestCount()));
-        infoSection.append(ConstantStrings.TABLE_ROW_MD.formatted(ConstantStrings.AVG_RESPONSE_SIZE_METRIC, "\n")
-            .formatted(report.getAverageRequestSize()));
-        infoSection.append(ConstantStrings.TABLE_ROW_MD.formatted(ConstantStrings.PERCENTILE_RESPONSE_SIZE_METRIC, "\n")
+            ConstantStrings.TABLE_ROW_MD.formatted(ConstantStrings.END_DATE_METRIC, ConstantStrings.NEW_LINE)
+                .formatted(report.endDate()));
+        infoSection.append(
+            ConstantStrings.TABLE_ROW_MD.formatted(ConstantStrings.REQUEST_COUNT_METRIC, ConstantStrings.NEW_LINE)
+                .formatted(report.requestCount()));
+        infoSection.append(
+            ConstantStrings.TABLE_ROW_MD.formatted(ConstantStrings.AVG_RESPONSE_SIZE_METRIC, ConstantStrings.NEW_LINE)
+                .formatted(report.getAverageRequestSize()));
+        infoSection.append(ConstantStrings.TABLE_ROW_MD.formatted(ConstantStrings.PERCENTILE_RESPONSE_SIZE_METRIC,
+                ConstantStrings.NEW_LINE)
             .formatted(report.getPercentile()));
         return infoSection.toString();
     }
 
     private String generateResourceSection(LogReport report) {
         StringBuilder resourceSection = new StringBuilder();
-        resourceSection.append(ConstantStrings.HEADER_MD.formatted(ConstantStrings.RESOURCE_HEADER.formatted("\n")));
-        resourceSection.append(ConstantStrings.TABLE_ROW_MD.formatted(ConstantStrings.RESOURCE_TABLE_HEADER, "\n"));
+        resourceSection.append(
+            ConstantStrings.HEADER_MD.formatted(ConstantStrings.RESOURCE_HEADER.formatted(ConstantStrings.NEW_LINE)));
+        resourceSection.append(
+            ConstantStrings.TABLE_ROW_MD.formatted(ConstantStrings.RESOURCE_TABLE_HEADER, ConstantStrings.NEW_LINE));
         resourceSection.append(ConstantStrings.TABLE_ALIGNMENT_MD);
         for (String key : report.resourcesCount().keySet()) {
-            resourceSection.append(ConstantStrings.TABLE_ROW_MD.formatted(ConstantStrings.TABLE_ROW_STRING_INT, "\n")
-                .formatted(key, report.resourcesCount().get(key)));
+            resourceSection.append(
+                ConstantStrings.TABLE_ROW_MD.formatted(ConstantStrings.TABLE_ROW_STRING_INT, ConstantStrings.NEW_LINE)
+                    .formatted(key, report.resourcesCount().get(key)));
         }
         return resourceSection.toString();
     }
@@ -81,13 +91,16 @@ public class MarkdownFileWriter implements FileWriter {
     private String generateResponseCodesSection(LogReport report) {
         StringBuilder responseCodesSection = new StringBuilder();
         responseCodesSection.append(
-            ConstantStrings.HEADER_MD.formatted(ConstantStrings.RESPONSE_CODES_HEADER.formatted("\n")));
+            ConstantStrings.HEADER_MD.formatted(
+                ConstantStrings.RESPONSE_CODES_HEADER.formatted(ConstantStrings.NEW_LINE)));
         responseCodesSection.append(
-            ConstantStrings.TABLE_ROW_MD.formatted(ConstantStrings.RESPONSE_CODES_TABLE_HEADER, "\n"));
+            ConstantStrings.TABLE_ROW_MD.formatted(ConstantStrings.RESPONSE_CODES_TABLE_HEADER,
+                ConstantStrings.NEW_LINE));
         responseCodesSection.append(ConstantStrings.TABLE_ALIGNMENT_MD_DETAILED);
         for (String status : report.requestStatusCount().keySet()) {
             responseCodesSection.append(
-                ConstantStrings.TABLE_ROW_MD.formatted(ConstantStrings.RESPONSE_CODES_TABLE_ROW, "\n").formatted(
+                ConstantStrings.TABLE_ROW_MD.formatted(ConstantStrings.RESPONSE_CODES_TABLE_ROW,
+                    ConstantStrings.NEW_LINE).formatted(
                     status,
                     StatusCodeLookup.getDescription(Integer.parseInt(status)),
                     report.requestStatusCount().get(status)
@@ -99,13 +112,15 @@ public class MarkdownFileWriter implements FileWriter {
     private String generateRequestTypesSection(LogReport report) {
         StringBuilder requestTypesSection = new StringBuilder();
         requestTypesSection.append(
-            ConstantStrings.HEADER_MD.formatted(ConstantStrings.REQUEST_TYPES_HEADER.formatted("\n")));
+            ConstantStrings.HEADER_MD.formatted(
+                ConstantStrings.REQUEST_TYPES_HEADER.formatted(ConstantStrings.NEW_LINE)));
         requestTypesSection.append(
-            ConstantStrings.TABLE_ROW_MD.formatted(ConstantStrings.REQUEST_TYPES_TABLE_HEADER, "\n"));
+            ConstantStrings.TABLE_ROW_MD.formatted(ConstantStrings.REQUEST_TYPES_TABLE_HEADER,
+                ConstantStrings.NEW_LINE));
         requestTypesSection.append(ConstantStrings.TABLE_ALIGNMENT_MD);
         for (String key : report.requestTypeCount().keySet()) {
             requestTypesSection.append(
-                ConstantStrings.TABLE_ROW_MD.formatted(ConstantStrings.TABLE_ROW_STRING_INT, "\n")
+                ConstantStrings.TABLE_ROW_MD.formatted(ConstantStrings.TABLE_ROW_STRING_INT, ConstantStrings.NEW_LINE)
                     .formatted(key, report.requestTypeCount().get(key)));
         }
         return requestTypesSection.toString();

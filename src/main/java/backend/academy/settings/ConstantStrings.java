@@ -4,7 +4,7 @@ import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class ConstantStrings {
-    public static final String EMPTY_STRING = "\n";
+    public static final String NEW_LINE = "\n";
     public static final String TABLE_ROW_STRING_INT = "|%s|%d";
     public static final String RESPONSE_CODES_TABLE_ROW = "|%s|%s|%d";
 
