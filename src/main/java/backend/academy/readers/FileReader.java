@@ -47,17 +47,15 @@ public class FileReader implements LogReader {
             }
         }
 
-        Path path = Paths.get("src/main/" + basePath);
+        Path baseDirectory = resolveBasePath(basePath.toString());
 
         PathMatcher matcher = FileSystems.getDefault().getPathMatcher(globPattern);
-        try (Stream<Path> stream = Files.walk(path)) {
+        try (Stream<Path> stream = Files.walk(baseDirectory)) {
             List<Path> foundFiles = stream
                 .filter(Files::isRegularFile)
                 .filter(matcher::matches)
                 .toList();
-            foundFiles.forEach(o -> {
-                dataProcessorService.addFileName(o.toString());
-            });
+            foundFiles.forEach(o -> dataProcessorService.addFileName(o.toString()));
             return foundFiles.stream()
                 .flatMap(pathE -> {
                     try {
@@ -67,5 +65,15 @@ public class FileReader implements LogReader {
                     }
                 });
         }
+    }
+
+    private Path resolveBasePath(String basePath) {
+        Path path = Paths.get(basePath);
+
+        if (path.isAbsolute()) {
+            return path;
+        }
+
+        return Paths.get(System.getProperty("user.dir"), basePath).normalize();
     }
 }

@@ -4,6 +4,9 @@ import backend.academy.parsers.LogParser;
 import backend.academy.readers.FileReader;
 import backend.academy.readers.URLReader;
 import backend.academy.services.DataProcessorService;
+import backend.academy.services.FilterService;
+import backend.academy.writers.AdocFileWriter;
+import backend.academy.writers.MarkdownFileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
@@ -15,13 +18,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
-import backend.academy.services.FilterService;
-import backend.academy.writers.AdocFileWriter;
-import backend.academy.writers.MarkdownFileWriter;
 import org.junit.jupiter.api.Test;
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AllTests {
@@ -30,7 +29,7 @@ class AllTests {
     public void testReadFile() throws IOException {
         FileReader fileReader = new FileReader(new DataProcessorService(new LogReport()));
 
-        Stream<String> stream = fileReader.read("/resources/sample.txt");
+        Stream<String> stream = fileReader.read("**/resources/sample.txt");
         List<String> correct = new ArrayList<>();
         correct.add("Hello, World!");
         assertEquals(correct, stream.toList());
@@ -64,7 +63,6 @@ class AllTests {
         assertEquals("\"-\"", logRecord.httpReferer());
         assertEquals("\"Debian APT-HTTP/1.3 (0.8.16~exp12ubuntu10.21)\"", logRecord.httpUserAgent());
     }
-
 
     @Test
     public void testFilter() {
