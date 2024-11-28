@@ -12,7 +12,9 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
+@Log4j2
 @RequiredArgsConstructor
 public class FileReader implements LogReader {
     private final DataProcessorService dataProcessorService;
@@ -82,6 +84,7 @@ public class FileReader implements LogReader {
                     try {
                         return Files.lines(pathE);
                     } catch (IOException e) {
+                        log.error(e.getMessage());
                         return Stream.empty();
                     }
                 });
