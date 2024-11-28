@@ -45,20 +45,26 @@ public class DataProcessorService {
 
     @SuppressFBWarnings("CLI_CONSTANT_LIST_INDEX")
     private void updateResourcesCount(LogRecord logRecord) {
-        logReport.resourcesCount().put(logRecord.request()[Settings.ONE],
-            logReport.resourcesCount().getOrDefault(logRecord.request()[Settings.ONE], Settings.ZERO) + Settings.ONE);
+        logReport.resourcesCount().merge(
+            logRecord.request()[Settings.ONE],
+            Settings.ONE,
+            Integer::sum
+        );
     }
 
     private void updateRequestStatusCount(LogRecord logRecord) {
-        logReport.requestStatusCount().put(String.valueOf(logRecord.status()),
-            logReport.requestStatusCount().getOrDefault(String.valueOf(logRecord.status()), Settings.ZERO)
-                + Settings.ONE);
+        logReport.requestStatusCount().merge(
+            String.valueOf(logRecord.status()),
+            Settings.ONE,
+            Integer::sum
+        );
     }
 
-    @SuppressFBWarnings("CLI_CONSTANT_LIST_INDEX")
     private void updateRequestTypeCount(LogRecord logRecord) {
-        logReport.requestTypeCount().put(logRecord.request()[Settings.ZERO],
-            logReport.requestTypeCount().getOrDefault(logRecord.request()[Settings.ZERO], Settings.ZERO)
-                + Settings.ONE);
+        logReport.requestTypeCount().merge(
+            logRecord.request()[Settings.ZERO],
+            Settings.ONE,
+            Integer::sum
+        );
     }
 }
