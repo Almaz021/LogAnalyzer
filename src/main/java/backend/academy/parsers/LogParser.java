@@ -62,13 +62,9 @@ public class LogParser {
     }
 
     public String parseHttpUserAgent(String[] line) {
-        StringBuilder httpUserAgentBuilder = new StringBuilder();
-        for (int i = HTTP_USER_AGENT_START_INDEX; i < line.length; i++) {
-            if (i != HTTP_USER_AGENT_START_INDEX) {
-                httpUserAgentBuilder.append(' ').append(line[i]);
-            } else {
-                httpUserAgentBuilder.append(line[i]);
-            }
+        StringBuilder httpUserAgentBuilder = new StringBuilder(line[HTTP_USER_AGENT_START_INDEX]);
+        for (int i = HTTP_USER_AGENT_START_INDEX + 1; i < line.length; i++) {
+            httpUserAgentBuilder.append(' ').append(line[i]);
         }
         return httpUserAgentBuilder.toString();
     }
