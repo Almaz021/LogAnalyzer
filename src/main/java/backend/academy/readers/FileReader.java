@@ -18,11 +18,23 @@ public class FileReader implements LogReader {
     private final DataProcessorService dataProcessorService;
 
     @Override
-    @SuppressFBWarnings("PATH_TRAVERSAL_IN")
+    @SuppressFBWarnings("CLI_CONSTANT_LIST_INDEX")
     public Stream<String> read(String filePath) throws IOException {
 
-        StringBuilder basePath = new StringBuilder();
+        String[] basePathAndGlob = createBasePathAndGlob(filePath);
+        String basePath = basePathAndGlob[0];
+        String globPattern = basePathAndGlob[1];
+
+        Path baseDirectory = resolveBasePath(basePath);
+
+        PathMatcher matcher = FileSystems.getDefault().getPathMatcher(globPattern);
+
+        return readFile(baseDirectory, matcher);
+    }
+
+    private String[] createBasePathAndGlob(String filePath) {
         StringBuilder currLine = new StringBuilder();
+        StringBuilder basePath = new StringBuilder();
         int currIndex = 0;
 
         while (currIndex < filePath.length() && filePath.charAt(currIndex) != '*') {
@@ -34,7 +46,6 @@ public class FileReader implements LogReader {
             }
             currIndex++;
         }
-
         String globPattern = "glob:";
 
         if (currIndex == filePath.length()) {
@@ -46,10 +57,20 @@ public class FileReader implements LogReader {
                 globPattern += "/*.txt";
             }
         }
+        return new String[] {basePath.toString(), globPattern};
+    }
 
-        Path baseDirectory = resolveBasePath(basePath.toString());
+    @SuppressFBWarnings("PATH_TRAVERSAL_IN")
+    private Path resolveBasePath(String basePath) {
+        Path path = Paths.get(basePath);
 
-        PathMatcher matcher = FileSystems.getDefault().getPathMatcher(globPattern);
+        if (path.isAbsolute()) {
+            return path;
+        }
+        return Paths.get(System.getProperty("user.dir"), basePath).normalize();
+    }
+
+    private Stream<String> readFile(Path baseDirectory, PathMatcher matcher) throws IOException {
         try (Stream<Path> stream = Files.walk(baseDirectory)) {
             List<Path> foundFiles = stream
                 .filter(Files::isRegularFile)
@@ -65,15 +86,5 @@ public class FileReader implements LogReader {
                     }
                 });
         }
-    }
-
-    private Path resolveBasePath(String basePath) {
-        Path path = Paths.get(basePath);
-
-        if (path.isAbsolute()) {
-            return path;
-        }
-
-        return Paths.get(System.getProperty("user.dir"), basePath).normalize();
     }
 }
