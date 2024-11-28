@@ -13,12 +13,11 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 
 public class AdocFileWriter implements FileWriter {
-    private String result = "";
 
     @Override
     @SuppressFBWarnings({"PATH_TRAVERSAL_OUT", "IOI_USE_OF_FILE_STREAM_CONSTRUCTORS"})
     public void writeFile(String fileName, LogReport report) {
-        generate(report);
+        String result = generateAdocContent(report);
         try (Writer writer = new BufferedWriter(new OutputStreamWriter(
             new FileOutputStream(fileName), StandardCharsets.UTF_8))) {
             writer.write(result);
@@ -27,71 +26,98 @@ public class AdocFileWriter implements FileWriter {
         }
     }
 
-    public void generate(LogReport report) {
-        result += ConstantStrings.FIRST_DELIMITER + ConstantStrings.FIRST_DELIMITER + ConstantStrings.MAIN_INFO
-            + ConstantStrings.NEW_LINE;
-        result += ConstantStrings.ADOC_TABLE_START + ConstantStrings.NEW_LINE;
-        result += ConstantStrings.SECOND_DELIMITER + ConstantStrings.FIRST_DELIMITER + ConstantStrings.FIRST_DELIMITER
-            + ConstantStrings.FIRST_DELIMITER + ConstantStrings.NEW_LINE;
-        result += ConstantStrings.SECOND_DELIMITER + ConstantStrings.METRIC + ConstantStrings.SECOND_DELIMITER
-            + ConstantStrings.VALUE + ConstantStrings.NEW_LINE;
-        result += ConstantStrings.SECOND_DELIMITER + ConstantStrings.FILES + ConstantStrings.SECOND_DELIMITER
-            + report.files() + ConstantStrings.NEW_LINE;
-        result += ConstantStrings.SECOND_DELIMITER + ConstantStrings.START_DATE + ConstantStrings.SECOND_DELIMITER
-            + report.startDate() + ConstantStrings.NEW_LINE;
-        result += ConstantStrings.SECOND_DELIMITER + ConstantStrings.END_DATE + ConstantStrings.SECOND_DELIMITER
-            + report.endDate() + ConstantStrings.NEW_LINE;
-        result += ConstantStrings.SECOND_DELIMITER + ConstantStrings.REQUEST_COUNT + ConstantStrings.SECOND_DELIMITER
-            + report.requestCount() + ConstantStrings.NEW_LINE;
-        result +=
-            ConstantStrings.SECOND_DELIMITER + ConstantStrings.AVG_RESPONSE_SIZE + ConstantStrings.SECOND_DELIMITER
-                + report.getAverageRequestSize() + ConstantStrings.NEW_LINE;
-        result +=
-            ConstantStrings.SECOND_DELIMITER + ConstantStrings.PERCENTILE_95_TEXT + ConstantStrings.SECOND_DELIMITER
-                + report.getPercentile() + ConstantStrings.NEW_LINE;
-        result += ConstantStrings.HEADER_SEPARATOR + ConstantStrings.NEW_LINE;
+    private String generateAdocContent(LogReport report) {
+        StringBuilder builder = new StringBuilder();
 
-        result +=
-            ConstantStrings.FIRST_DELIMITER + ConstantStrings.FIRST_DELIMITER + ConstantStrings.REQUESTED_RESOURCES
-                + ConstantStrings.NEW_LINE;
-        result += ConstantStrings.ADOC_TABLE_START + ConstantStrings.NEW_LINE;
-        result += ConstantStrings.HEADER_SEPARATOR + ConstantStrings.NEW_LINE;
-        result += ConstantStrings.SECOND_DELIMITER + ConstantStrings.RESOURCE_COLUMN + ConstantStrings.SECOND_DELIMITER
-            + ConstantStrings.COUNT_COLUMN + ConstantStrings.NEW_LINE;
+        builder.append(generateGeneralInfoSection(report));
+
+        builder.append(generateResourceSection(report));
+
+        builder.append(generateResponseCodesSection(report));
+
+        builder.append(generateRequestTypesSection(report));
+
+        return builder.toString();
+    }
+
+    private String generateGeneralInfoSection(LogReport report) {
+        StringBuilder infoSection = new StringBuilder();
+        infoSection.append(ConstantStrings.HEADER_ADOC.formatted(
+            ConstantStrings.GENERAL_INFO_HEADER.formatted(ConstantStrings.EMPTY_STRING)));
+        infoSection.append(ConstantStrings.METRIC_TABLE_HEADER_ADOC.formatted(ConstantStrings.EMPTY_STRING,
+            ConstantStrings.EMPTY_STRING, ConstantStrings.EMPTY_STRING));
+        infoSection.append(
+            ConstantStrings.TABLE_ROW_ADOC.formatted(ConstantStrings.FILES_METRIC, ConstantStrings.EMPTY_STRING)
+                .formatted(report.files()));
+        infoSection.append(
+            ConstantStrings.TABLE_ROW_ADOC.formatted(ConstantStrings.START_DATE_METRIC, ConstantStrings.EMPTY_STRING)
+                .formatted(report.startDate()));
+        infoSection.append(
+            ConstantStrings.TABLE_ROW_ADOC.formatted(ConstantStrings.END_DATE_METRIC, ConstantStrings.EMPTY_STRING)
+                .formatted(report.endDate()));
+        infoSection.append(
+            ConstantStrings.TABLE_ROW_ADOC.formatted(ConstantStrings.REQUEST_COUNT_METRIC, ConstantStrings.EMPTY_STRING)
+                .formatted(report.requestCount()));
+        infoSection.append(ConstantStrings.TABLE_ROW_ADOC.formatted(ConstantStrings.AVG_RESPONSE_SIZE_METRIC,
+                ConstantStrings.EMPTY_STRING)
+            .formatted(report.getAverageRequestSize()));
+        infoSection.append(ConstantStrings.TABLE_ROW_ADOC.formatted(ConstantStrings.PERCENTILE_RESPONSE_SIZE_METRIC,
+                ConstantStrings.EMPTY_STRING)
+            .formatted(report.getPercentile()));
+        infoSection.append(ConstantStrings.TABLE_ADOC.formatted(ConstantStrings.EMPTY_STRING));
+        return infoSection.toString();
+    }
+
+    private String generateResourceSection(LogReport report) {
+        StringBuilder resourceSection = new StringBuilder();
+        resourceSection.append(ConstantStrings.HEADER_ADOC.formatted(
+            ConstantStrings.RESOURCE_HEADER.formatted(ConstantStrings.EMPTY_STRING)));
+        resourceSection.append(ConstantStrings.RESOURCE_TABLE_HEADER_ADOC.formatted(ConstantStrings.EMPTY_STRING,
+            ConstantStrings.EMPTY_STRING, ConstantStrings.EMPTY_STRING));
         for (String key : report.resourcesCount().keySet()) {
-            result += ConstantStrings.SECOND_DELIMITER + key + ConstantStrings.SECOND_DELIMITER
-                + report.resourcesCount().get(key) + ConstantStrings.NEW_LINE;
+            resourceSection.append(ConstantStrings.TABLE_ROW_ADOC.formatted(ConstantStrings.TABLE_ROW_STRING_INT,
+                    ConstantStrings.EMPTY_STRING)
+                .formatted(key, report.resourcesCount().get(key)));
         }
-        result += ConstantStrings.HEADER_SEPARATOR + ConstantStrings.NEW_LINE;
+        resourceSection.append(ConstantStrings.TABLE_ADOC.formatted(ConstantStrings.EMPTY_STRING));
+        return resourceSection.toString();
+    }
 
-        result += ConstantStrings.FIRST_DELIMITER + ConstantStrings.FIRST_DELIMITER + ConstantStrings.RESPONSE_CODES
-            + ConstantStrings.NEW_LINE;
-        result += ConstantStrings.ADOC_TABLE_START + ConstantStrings.NEW_LINE;
-        result += ConstantStrings.HEADER_SEPARATOR + ConstantStrings.NEW_LINE;
-        result += ConstantStrings.SECOND_DELIMITER + ConstantStrings.CODE_COLUMN + ConstantStrings.SECOND_DELIMITER
-            + ConstantStrings.NAME_COLUMN + ConstantStrings.SECOND_DELIMITER + ConstantStrings.COUNT_COLUMN
-            + ConstantStrings.NEW_LINE;
+    private String generateResponseCodesSection(LogReport report) {
+        StringBuilder responseCodesSection = new StringBuilder();
+        responseCodesSection.append(
+            ConstantStrings.HEADER_ADOC.formatted(
+                ConstantStrings.RESPONSE_CODES_HEADER.formatted(ConstantStrings.EMPTY_STRING)));
+        responseCodesSection.append(
+            ConstantStrings.RESPONSE_CODES_TABLE_HEADER_ADOC.formatted(ConstantStrings.EMPTY_STRING,
+                ConstantStrings.EMPTY_STRING, ConstantStrings.EMPTY_STRING));
         for (String status : report.requestStatusCount().keySet()) {
-            result += ConstantStrings.SECOND_DELIMITER + status + ConstantStrings.SECOND_DELIMITER
-                + StatusCodeLookup.getDescription(Integer.parseInt(status)) + ConstantStrings.SECOND_DELIMITER
-                + report.requestStatusCount().get(status) + ConstantStrings.NEW_LINE;
+            responseCodesSection.append(
+                ConstantStrings.TABLE_ROW_ADOC.formatted(ConstantStrings.RESPONSE_CODES_TABLE_ROW,
+                    ConstantStrings.EMPTY_STRING).formatted(
+                    status,
+                    StatusCodeLookup.getDescription(Integer.parseInt(status)),
+                    report.requestStatusCount().get(status)
+                ));
         }
-        result += ConstantStrings.HEADER_SEPARATOR + ConstantStrings.NEW_LINE;
+        responseCodesSection.append(ConstantStrings.TABLE_ADOC.formatted(ConstantStrings.EMPTY_STRING));
+        return responseCodesSection.toString();
+    }
 
-
-
-        result +=
-            ConstantStrings.FIRST_DELIMITER + ConstantStrings.FIRST_DELIMITER + ConstantStrings.TYPES
-                + ConstantStrings.NEW_LINE;
-        result += ConstantStrings.ADOC_TABLE_START + ConstantStrings.NEW_LINE;
-        result += ConstantStrings.HEADER_SEPARATOR + ConstantStrings.NEW_LINE;
-        result += ConstantStrings.SECOND_DELIMITER + ConstantStrings.TYPE + ConstantStrings.SECOND_DELIMITER
-            + ConstantStrings.COUNT_COLUMN + ConstantStrings.NEW_LINE;
+    private String generateRequestTypesSection(LogReport report) {
+        StringBuilder requestTypesSection = new StringBuilder();
+        requestTypesSection.append(
+            ConstantStrings.HEADER_ADOC.formatted(
+                ConstantStrings.REQUEST_TYPES_HEADER.formatted(ConstantStrings.EMPTY_STRING)));
+        requestTypesSection.append(
+            ConstantStrings.REQUEST_TYPES_TABLE_HEADER_ADOC.formatted(ConstantStrings.EMPTY_STRING,
+                ConstantStrings.EMPTY_STRING, ConstantStrings.EMPTY_STRING));
         for (String key : report.requestTypeCount().keySet()) {
-            result += ConstantStrings.SECOND_DELIMITER + key + ConstantStrings.SECOND_DELIMITER
-                + report.requestTypeCount().get(key) + ConstantStrings.NEW_LINE;
+            requestTypesSection.append(ConstantStrings.TABLE_ROW_ADOC.formatted(ConstantStrings.TABLE_ROW_STRING_INT,
+                    ConstantStrings.EMPTY_STRING)
+                .formatted(key, report.requestTypeCount().get(key)));
         }
-        result += ConstantStrings.HEADER_SEPARATOR + ConstantStrings.NEW_LINE;
-
+        requestTypesSection.append(ConstantStrings.TABLE_ADOC.formatted(ConstantStrings.EMPTY_STRING));
+        return requestTypesSection.toString();
     }
 }

@@ -9,10 +9,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Map;
 
 public class MarkdownFileWriter implements FileWriter {
-    private String result = "";
 
     @Override
     @SuppressFBWarnings({"NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE", "PATH_TRAVERSAL_IN",
@@ -21,7 +19,8 @@ public class MarkdownFileWriter implements FileWriter {
         if (report == null) {
             throw new IllegalArgumentException("LogReport cannot be null");
         }
-        generate(report);
+
+        String result = generateMarkdownContent(report);
 
         Path path = Paths.get(fileName).normalize();
         try {
@@ -32,75 +31,83 @@ public class MarkdownFileWriter implements FileWriter {
         }
     }
 
-    private void generate(LogReport report) {
-        // Section: General Information
-        result += ConstantStrings.MARKDOWN_HASH + ConstantStrings.MAIN_INFO + ConstantStrings.NEW_LINE;
-        result += ConstantStrings.SECOND_DELIMITER + ConstantStrings.METRIC + ConstantStrings.SECOND_DELIMITER
-            + ConstantStrings.VALUE + ConstantStrings.SECOND_DELIMITER + ConstantStrings.NEW_LINE;
-        result += ConstantStrings.TABLE_HEADER_SEPARATOR + ConstantStrings.NEW_LINE;
+    private String generateMarkdownContent(LogReport report) {
+        StringBuilder builder = new StringBuilder();
 
-        // Null checks before accessing methods
-        result += ConstantStrings.SECOND_DELIMITER + ConstantStrings.FILES + ConstantStrings.SECOND_DELIMITER
-            + (report.files() != null ? report.files() : ConstantStrings.NA) + ConstantStrings.SECOND_DELIMITER
-            + ConstantStrings.NEW_LINE;
-        result += ConstantStrings.SECOND_DELIMITER + ConstantStrings.START_DATE + ConstantStrings.SECOND_DELIMITER
-            + (report.startDate() != null ? report.startDate() : ConstantStrings.NA) + ConstantStrings.SECOND_DELIMITER
-            + ConstantStrings.NEW_LINE;
-        result += ConstantStrings.SECOND_DELIMITER + ConstantStrings.END_DATE + ConstantStrings.SECOND_DELIMITER
-            + (report.endDate() != null ? report.endDate() : ConstantStrings.NA) + ConstantStrings.SECOND_DELIMITER
-            + ConstantStrings.NEW_LINE;
-        result += ConstantStrings.SECOND_DELIMITER + ConstantStrings.REQUEST_COUNT + ConstantStrings.SECOND_DELIMITER
-            + (report.requestCount() != null ? report.requestCount() : "0") + ConstantStrings.SECOND_DELIMITER
-            + ConstantStrings.NEW_LINE;
-        result +=
-            ConstantStrings.SECOND_DELIMITER + ConstantStrings.AVG_RESPONSE_SIZE + ConstantStrings.SECOND_DELIMITER
-                + (report.getAverageRequestSize() != null ? report.getAverageRequestSize() : ConstantStrings.NA)
-                + ConstantStrings.SECOND_DELIMITER + ConstantStrings.NEW_LINE;
-        result +=
-            ConstantStrings.SECOND_DELIMITER + ConstantStrings.PERCENTILE_95_TEXT + ConstantStrings.SECOND_DELIMITER
-                + (report.getPercentile())
-                + ConstantStrings.SECOND_DELIMITER
-                + ConstantStrings.NEW_LINE;
+        builder.append(generateGeneralInfoSection(report));
 
-        // Section: Requested Resources
-        result += ConstantStrings.MARKDOWN_HASH + ConstantStrings.REQUESTED_RESOURCES + ConstantStrings.NEW_LINE;
-        result += ConstantStrings.SECOND_DELIMITER + ConstantStrings.RESOURCE_COLUMN + ConstantStrings.SECOND_DELIMITER
-            + ConstantStrings.COUNT_COLUMN + ConstantStrings.SECOND_DELIMITER + ConstantStrings.NEW_LINE;
-        result += ConstantStrings.TABLE_HEADER_SEPARATOR + ConstantStrings.NEW_LINE;
+        builder.append(generateResourceSection(report));
 
-        // Null check for resources count
-        for (Map.Entry<?, ?> entry : report.resourcesCount() != null ? report.resourcesCount().entrySet()
-            : Map.of().entrySet()) {
-            result += ConstantStrings.SECOND_DELIMITER + entry.getKey() + ConstantStrings.SECOND_DELIMITER
-                + entry.getValue() + ConstantStrings.SECOND_DELIMITER + ConstantStrings.NEW_LINE;
+        builder.append(generateResponseCodesSection(report));
+
+        builder.append(generateRequestTypesSection(report));
+
+        return builder.toString();
+    }
+
+    private String generateGeneralInfoSection(LogReport report) {
+        StringBuilder infoSection = new StringBuilder();
+        infoSection.append(ConstantStrings.HEADER_MD.formatted(ConstantStrings.GENERAL_INFO_HEADER.formatted("\n")));
+        infoSection.append(ConstantStrings.TABLE_ROW_MD.formatted(ConstantStrings.METRIC_TABLE_HEADER, "\n"));
+        infoSection.append(ConstantStrings.TABLE_ALIGNMENT_MD);
+        infoSection.append(
+            ConstantStrings.TABLE_ROW_MD.formatted(ConstantStrings.FILES_METRIC, "\n").formatted(report.files()));
+        infoSection.append(
+            ConstantStrings.TABLE_ROW_MD.formatted(ConstantStrings.START_DATE_METRIC, "\n")
+                .formatted(report.startDate()));
+        infoSection.append(
+            ConstantStrings.TABLE_ROW_MD.formatted(ConstantStrings.END_DATE_METRIC, "\n").formatted(report.endDate()));
+        infoSection.append(ConstantStrings.TABLE_ROW_MD.formatted(ConstantStrings.REQUEST_COUNT_METRIC, "\n")
+            .formatted(report.requestCount()));
+        infoSection.append(ConstantStrings.TABLE_ROW_MD.formatted(ConstantStrings.AVG_RESPONSE_SIZE_METRIC, "\n")
+            .formatted(report.getAverageRequestSize()));
+        infoSection.append(ConstantStrings.TABLE_ROW_MD.formatted(ConstantStrings.PERCENTILE_RESPONSE_SIZE_METRIC, "\n")
+            .formatted(report.getPercentile()));
+        return infoSection.toString();
+    }
+
+    private String generateResourceSection(LogReport report) {
+        StringBuilder resourceSection = new StringBuilder();
+        resourceSection.append(ConstantStrings.HEADER_MD.formatted(ConstantStrings.RESOURCE_HEADER.formatted("\n")));
+        resourceSection.append(ConstantStrings.TABLE_ROW_MD.formatted(ConstantStrings.RESOURCE_TABLE_HEADER, "\n"));
+        resourceSection.append(ConstantStrings.TABLE_ALIGNMENT_MD);
+        for (String key : report.resourcesCount().keySet()) {
+            resourceSection.append(ConstantStrings.TABLE_ROW_MD.formatted(ConstantStrings.TABLE_ROW_STRING_INT, "\n")
+                .formatted(key, report.resourcesCount().get(key)));
         }
+        return resourceSection.toString();
+    }
 
-        // Section: Response Codes
-        result += ConstantStrings.MARKDOWN_HASH + ConstantStrings.RESPONSE_CODES + ConstantStrings.NEW_LINE;
-        result += ConstantStrings.SECOND_DELIMITER + ConstantStrings.CODE_COLUMN + ConstantStrings.SECOND_DELIMITER
-            + ConstantStrings.NAME_COLUMN + ConstantStrings.SECOND_DELIMITER + ConstantStrings.COUNT_COLUMN
-            + ConstantStrings.SECOND_DELIMITER + ConstantStrings.NEW_LINE;
-        result += ConstantStrings.TABLE_ROW_SEPARATOR + ConstantStrings.NEW_LINE;
-
-        // Null check for status codes count
-        for (Map.Entry<?, ?> entry : report.requestStatusCount() != null ? report.requestStatusCount().entrySet()
-            : Map.of().entrySet()) {
-            result += ConstantStrings.SECOND_DELIMITER + entry.getKey() + ConstantStrings.SECOND_DELIMITER
-                + StatusCodeLookup.getDescription(Integer.parseInt((String) entry.getKey()))
-                + ConstantStrings.SECOND_DELIMITER
-                + entry.getValue() + ConstantStrings.SECOND_DELIMITER + ConstantStrings.NEW_LINE;
+    private String generateResponseCodesSection(LogReport report) {
+        StringBuilder responseCodesSection = new StringBuilder();
+        responseCodesSection.append(
+            ConstantStrings.HEADER_MD.formatted(ConstantStrings.RESPONSE_CODES_HEADER.formatted("\n")));
+        responseCodesSection.append(
+            ConstantStrings.TABLE_ROW_MD.formatted(ConstantStrings.RESPONSE_CODES_TABLE_HEADER, "\n"));
+        responseCodesSection.append(ConstantStrings.TABLE_ALIGNMENT_MD_DETAILED);
+        for (String status : report.requestStatusCount().keySet()) {
+            responseCodesSection.append(
+                ConstantStrings.TABLE_ROW_MD.formatted(ConstantStrings.RESPONSE_CODES_TABLE_ROW, "\n").formatted(
+                    status,
+                    StatusCodeLookup.getDescription(Integer.parseInt(status)),
+                    report.requestStatusCount().get(status)
+                ));
         }
+        return responseCodesSection.toString();
+    }
 
-        // Types Section
-        result += ConstantStrings.MARKDOWN_HASH + ConstantStrings.TYPES + ConstantStrings.NEW_LINE;
-        result += ConstantStrings.SECOND_DELIMITER + ConstantStrings.TYPE + ConstantStrings.SECOND_DELIMITER
-            + ConstantStrings.COUNT_COLUMN + ConstantStrings.SECOND_DELIMITER + ConstantStrings.NEW_LINE;
-        result += ConstantStrings.TABLE_HEADER_SEPARATOR + ConstantStrings.NEW_LINE;
-
-        for (Map.Entry<?, ?> entry : report.requestTypeCount() != null ? report.requestTypeCount().entrySet()
-            : Map.of().entrySet()) {
-            result += ConstantStrings.SECOND_DELIMITER + entry.getKey() + ConstantStrings.SECOND_DELIMITER
-                + entry.getValue() + ConstantStrings.SECOND_DELIMITER + ConstantStrings.NEW_LINE;
+    private String generateRequestTypesSection(LogReport report) {
+        StringBuilder requestTypesSection = new StringBuilder();
+        requestTypesSection.append(
+            ConstantStrings.HEADER_MD.formatted(ConstantStrings.REQUEST_TYPES_HEADER.formatted("\n")));
+        requestTypesSection.append(
+            ConstantStrings.TABLE_ROW_MD.formatted(ConstantStrings.REQUEST_TYPES_TABLE_HEADER, "\n"));
+        requestTypesSection.append(ConstantStrings.TABLE_ALIGNMENT_MD);
+        for (String key : report.requestTypeCount().keySet()) {
+            requestTypesSection.append(
+                ConstantStrings.TABLE_ROW_MD.formatted(ConstantStrings.TABLE_ROW_STRING_INT, "\n")
+                    .formatted(key, report.requestTypeCount().get(key)));
         }
+        return requestTypesSection.toString();
     }
 }

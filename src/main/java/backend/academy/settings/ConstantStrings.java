@@ -4,30 +4,41 @@ import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class ConstantStrings {
-    public static final String MAIN_INFO = " Общая информация";
-    public static final String ADOC_TABLE_START = "[options=\"header\"]";
-    public static final String FIRST_DELIMITER = "=";
-    public static final String SECOND_DELIMITER = "|";
-    public static final String NEW_LINE = "\n";
-    public static final String METRIC = "Метрика";
-    public static final String VALUE = "Значение";
-    public static final String FILES = "Файл(-ы)";
-    public static final String START_DATE = "Начальная дата";
-    public static final String END_DATE = "Конечная дата";
-    public static final String REQUEST_COUNT = "Количество запросов";
-    public static final String AVG_RESPONSE_SIZE = "Средний размер ответа";
-    public static final String PERCENTILE_95_TEXT = "95p размера ответа";
-    public static final String HEADER_SEPARATOR = "|===";
-    public static final String REQUESTED_RESOURCES = " Запрашиваемые ресурсы";
-    public static final String RESOURCE_COLUMN = "Ресурс";
-    public static final String COUNT_COLUMN = "Количество";
-    public static final String RESPONSE_CODES = " Коды ответа";
-    public static final String CODE_COLUMN = "Код";
-    public static final String NAME_COLUMN = "Имя";
-    public static final String TABLE_HEADER_SEPARATOR = "|:---------------------:|-------------:|";
-    public static final String TABLE_ROW_SEPARATOR = "|:---:|:---------------------:|-----------:|";
-    public static final String MARKDOWN_HASH = "####";
-    public static final String NA = "N/A";
-    public static final String TYPES = " Типы запросов";
-    public static final String TYPE = "Тип";
+    public static final String EMPTY_STRING = "\n";
+    public static final String TABLE_ROW_STRING_INT = "|%s|%d";
+    public static final String RESPONSE_CODES_TABLE_ROW = "|%s|%s|%d";
+
+    public static final String GENERAL_INFO_HEADER = "Общая информация%s";
+    public static final String RESOURCE_HEADER = "Запрашиваемые ресурсы%s";
+    public static final String RESPONSE_CODES_HEADER = "Коды ответа%s";
+    public static final String REQUEST_TYPES_HEADER = "Типы запросов%s";
+
+    public static final String METRIC_TABLE_HEADER = "|Метрика|Значение";
+    public static final String RESOURCE_TABLE_HEADER = "|Ресурс|Количество";
+    public static final String RESPONSE_CODES_TABLE_HEADER = "|Код|Имя|Количество";
+    public static final String REQUEST_TYPES_TABLE_HEADER = "|Тип|Количество";
+
+    public static final String FILES_METRIC = "|Файл(-ы)|%s";
+    public static final String START_DATE_METRIC = "|Начальная дата|%s";
+    public static final String END_DATE_METRIC = "|Конечная дата|%s";
+    public static final String REQUEST_COUNT_METRIC = "|Количество запросов|%d";
+    public static final String AVG_RESPONSE_SIZE_METRIC = "|Средний размер ответа|%s";
+    public static final String PERCENTILE_RESPONSE_SIZE_METRIC = "|95p размера ответа|%s";
+
+    // Markdown
+    public static final String HEADER_MD = "#### %s";
+    public static final String TABLE_ROW_MD = "%s|%s";
+
+    public static final String TABLE_ALIGNMENT_MD = "|:---------------------:|-------------:|\n";
+    public static final String TABLE_ALIGNMENT_MD_DETAILED = "|:---:|:---------------------:|-----------:|\n";
+
+    // Adoc
+    public static final String HEADER_ADOC = "== %s";
+    public static final String TABLE_ROW_ADOC = "%s%S";
+    public static final String TABLE_ADOC = "|===%s";
+
+    public static final String METRIC_TABLE_HEADER_ADOC = "[options=\"header\"]%s|===%s|Метрика|Значение%s";
+    public static final String RESOURCE_TABLE_HEADER_ADOC = "[options=\"header\"]%s|===%s|Ресурс|Количество%s";
+    public static final String RESPONSE_CODES_TABLE_HEADER_ADOC = "[options=\"header\"]%s|===%s|Код|Имя|Количество%s";
+    public static final String REQUEST_TYPES_TABLE_HEADER_ADOC = "[options=\"header\"]%s|===%s|Тип|Количество%s";
 }
