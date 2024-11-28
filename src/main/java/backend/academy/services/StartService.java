@@ -80,23 +80,27 @@ public class StartService {
     private void readLogs() {
         lines.forEach(o -> {
             LogRecord logRecord = parser.parse(o);
-            boolean flag = true;
-            if (!"".equals(additionalFilter)) {
-                flag = filterService.filterByValue(logRecord, additionalFilter);
-            }
-            if (flag && from != null && to != null
-                && filterService.filterByDate(logRecord, from, to)) {
-                update(logRecord);
-            } else if (flag && from != null && to == null && filterService.filterByDate(logRecord, from, "from")) {
-                update(logRecord);
-            } else if (flag && to != null && from == null && filterService.filterByDate(logRecord, to, "to")) {
-                update(logRecord);
-            } else if (flag && from == null && to == null) {
-                update(logRecord);
-            } else {
+
+            if (!isValid(logRecord)) {
                 printWriter.println("NOT ACCEPTED");
+                return;
             }
+
+            update(logRecord);
         });
+    }
+
+    private boolean isValid(LogRecord logRecord) {
+        boolean isFilterValid = "".equals(additionalFilter) || filterService.filterByValue(logRecord, additionalFilter);
+        if (!isFilterValid) {
+            return false;
+        }
+        if (from != null || to != null) {
+            return from != null && to != null
+                ? filterService.filterByDate(logRecord, from, to)
+                : filterService.filterByDate(logRecord, from != null ? from : to, from != null ? "from" : "to");
+        }
+        return true;
     }
 
     public void update(LogRecord logRecord) {
