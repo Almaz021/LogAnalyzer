@@ -4,7 +4,6 @@ import backend.academy.entities.LogRecord;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.Locale;
 import lombok.RequiredArgsConstructor;
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
@@ -59,14 +58,9 @@ public class LogParser {
     public LocalDate parseTime(String[] line) {
         String rawTimeLocal = parseByIndex(line, 1).split(":")[0].substring(1);
         DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd/MMM/yyyy", Locale.ENGLISH);
-
-        try {
-            LocalDate date = LocalDate.parse(rawTimeLocal, inputFormatter);
-            String formattedDate = date.format(DateTimeFormatter.ISO_LOCAL_DATE);
-            return LocalDate.parse(formattedDate, ISO_LOCAL_DATE);
-        } catch (DateTimeParseException e) {
-            throw new RuntimeException(e);
-        }
+        LocalDate date = LocalDate.parse(rawTimeLocal, inputFormatter);
+        String formattedDate = date.format(DateTimeFormatter.ISO_LOCAL_DATE);
+        return LocalDate.parse(formattedDate, ISO_LOCAL_DATE);
     }
 
     public String parseHttpUserAgent(String[] line) {
