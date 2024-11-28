@@ -10,9 +10,9 @@ import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
 
 @RequiredArgsConstructor
 public class LogParser {
-    private final static int REQUEST_FIRST_INDEX = 3;
-    private final static int REQUEST_SECOND_INDEX = 4;
-    private final static int REQUEST_THIRD_INDEX = 5;
+    private final static int REQUEST_TYPE_INDEX = 3;
+    private final static int REQUEST_RESOURCE_INDEX = 4;
+    private final static int REQUEST_HTTP_INDEX = 5;
     private final static int STATUS_INDEX = 6;
     private final static int BODY_BYTES_SENT_INDEX = 7;
     private final static int HTTP_REFERER_INDEX = 8;
@@ -28,9 +28,9 @@ public class LogParser {
 
         LocalDate timeLocal = parseTime(secondSplit);
 
-        String requestType = parseByIndex(secondSplit, REQUEST_FIRST_INDEX);
-        String requestResource = parseByIndex(secondSplit, REQUEST_SECOND_INDEX);
-        String requestHTTP = parseByIndex(secondSplit, REQUEST_THIRD_INDEX);
+        String requestType = parseByIndex(secondSplit, REQUEST_TYPE_INDEX);
+        String requestResource = parseByIndex(secondSplit, REQUEST_RESOURCE_INDEX);
+        String requestHTTP = parseByIndex(secondSplit, REQUEST_HTTP_INDEX);
         String[] request = {requestType, requestResource, requestHTTP};
 
         Integer status = Integer.valueOf(parseByIndex(secondSplit, STATUS_INDEX));
