@@ -10,8 +10,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+/**
+ * A writer class responsible for generating a Markdown report from a LogReport.
+ */
 public class MarkdownFileWriter implements FileWriter {
 
+    /**
+     * Writes the formatted Markdown content to a specified file.
+     */
     @Override
     @SuppressFBWarnings({"NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE", "PATH_TRAVERSAL_IN",
         "PRMC_POSSIBLY_REDUNDANT_METHOD_CALLS"})
@@ -31,6 +37,9 @@ public class MarkdownFileWriter implements FileWriter {
         }
     }
 
+    /**
+     * Generates the Markdown content for the given LogReport.
+     */
     private String generateMarkdownContent(LogReport report) {
         StringBuilder builder = new StringBuilder();
 
@@ -45,6 +54,9 @@ public class MarkdownFileWriter implements FileWriter {
         return builder.toString();
     }
 
+    /**
+     * Generates the general information section of the Markdown report.
+     */
     private String generateGeneralInfoSection(LogReport report) {
         StringBuilder infoSection = new StringBuilder();
         infoSection.append(ConstantStrings.HEADER_MD.formatted(
@@ -73,6 +85,9 @@ public class MarkdownFileWriter implements FileWriter {
         return infoSection.toString();
     }
 
+    /**
+     * Generates the resource section of the Markdown report.
+     */
     private String generateResourceSection(LogReport report) {
         StringBuilder resourceSection = new StringBuilder();
         resourceSection.append(
@@ -88,6 +103,9 @@ public class MarkdownFileWriter implements FileWriter {
         return resourceSection.toString();
     }
 
+    /**
+     * Generates the response codes section of the Markdown report.
+     */
     private String generateResponseCodesSection(LogReport report) {
         StringBuilder responseCodesSection = new StringBuilder();
         responseCodesSection.append(
@@ -109,6 +127,9 @@ public class MarkdownFileWriter implements FileWriter {
         return responseCodesSection.toString();
     }
 
+    /**
+     * Generates the request types section of the Markdown report.
+     */
     private String generateRequestTypesSection(LogReport report) {
         StringBuilder requestTypesSection = new StringBuilder();
         requestTypesSection.append(

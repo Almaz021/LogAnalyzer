@@ -6,6 +6,9 @@ import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import lombok.experimental.UtilityClass;
 
+/**
+ * The entry point of the application.
+ */
 @UtilityClass
 public class Main {
     public static void main(String[] args) {

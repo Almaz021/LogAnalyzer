@@ -9,6 +9,12 @@ import java.util.Locale;
 import lombok.RequiredArgsConstructor;
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
 
+/**
+ * A parser that converts raw log entries into {@link LogRecord} objects.
+ * <p>
+ * Parses fields such as client IP address, username, request details, status code,
+ * response size, referrer URL, and User-Agent string.
+ */
 @RequiredArgsConstructor
 public class LogParser {
     private final static int REQUEST_TYPE_INDEX = 3;
@@ -52,8 +58,11 @@ public class LogParser {
             httpUserAgent);
     }
 
+    /**
+     * Extracts the date from the log entry and formats it to ISO_LOCAL_DATE.
+     */
     @SuppressFBWarnings("CLI_CONSTANT_LIST_INDEX")
-    public LocalDate parseTime(String[] line) {
+    private LocalDate parseTime(String[] line) {
         String rawTimeLocal = line[1].split(":")[0].substring(1);
         DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd/MMM/yyyy", Locale.ENGLISH);
         LocalDate date = LocalDate.parse(rawTimeLocal, inputFormatter);
@@ -61,7 +70,10 @@ public class LogParser {
         return LocalDate.parse(formattedDate, ISO_LOCAL_DATE);
     }
 
-    public String parseHttpUserAgent(String[] line) {
+    /**
+     * Combines the components of the User-Agent string from the log entry.
+     */
+    private String parseHttpUserAgent(String[] line) {
         StringBuilder httpUserAgentBuilder = new StringBuilder(line[HTTP_USER_AGENT_START_INDEX]);
         for (int i = HTTP_USER_AGENT_START_INDEX + 1; i < line.length; i++) {
             httpUserAgentBuilder.append(' ').append(line[i]);

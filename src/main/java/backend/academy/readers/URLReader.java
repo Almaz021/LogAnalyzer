@@ -8,6 +8,11 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.stream.Stream;
 
+/**
+ * A URL reader implementation of {@link LogReader} for reading log data from a web resource.
+ * <p>
+ * This class sends an HTTP GET request to the specified URL and streams the response line by line.
+ */
 public class URLReader implements LogReader {
 
     @Override

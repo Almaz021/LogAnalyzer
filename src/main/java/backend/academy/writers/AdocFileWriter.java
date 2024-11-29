@@ -12,8 +12,14 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * A writer class responsible for generating an AsciiDoc (.adoc) report from a LogReport.
+ */
 public class AdocFileWriter implements FileWriter {
 
+    /**
+     * Writes the formatted AsciiDoc content to a specified file.
+     */
     @Override
     @SuppressFBWarnings({"PATH_TRAVERSAL_OUT", "IOI_USE_OF_FILE_STREAM_CONSTRUCTORS"})
     public void writeFile(String fileName, LogReport report) {
@@ -26,6 +32,9 @@ public class AdocFileWriter implements FileWriter {
         }
     }
 
+    /**
+     * Generates the AsciiDoc content for the given LogReport.
+     */
     private String generateAdocContent(LogReport report) {
         StringBuilder builder = new StringBuilder();
 
@@ -40,6 +49,9 @@ public class AdocFileWriter implements FileWriter {
         return builder.toString();
     }
 
+    /**
+     * Generates the general information section of the AsciiDoc report.
+     */
     private String generateGeneralInfoSection(LogReport report) {
         StringBuilder infoSection = new StringBuilder();
         infoSection.append(ConstantStrings.HEADER_ADOC.formatted(
@@ -68,6 +80,9 @@ public class AdocFileWriter implements FileWriter {
         return infoSection.toString();
     }
 
+    /**
+     * Generates the resource section of the AsciiDoc report.
+     */
     private String generateResourceSection(LogReport report) {
         StringBuilder resourceSection = new StringBuilder();
         resourceSection.append(ConstantStrings.HEADER_ADOC.formatted(
@@ -83,6 +98,9 @@ public class AdocFileWriter implements FileWriter {
         return resourceSection.toString();
     }
 
+    /**
+     * Generates the response codes section of the AsciiDoc report.
+     */
     private String generateResponseCodesSection(LogReport report) {
         StringBuilder responseCodesSection = new StringBuilder();
         responseCodesSection.append(
@@ -104,6 +122,9 @@ public class AdocFileWriter implements FileWriter {
         return responseCodesSection.toString();
     }
 
+    /**
+     * Generates the request types section of the AsciiDoc report.
+     */
     private String generateRequestTypesSection(LogReport report) {
         StringBuilder requestTypesSection = new StringBuilder();
         requestTypesSection.append(

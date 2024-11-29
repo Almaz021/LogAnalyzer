@@ -3,14 +3,17 @@ package backend.academy;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Enum that represents HTTP status codes and their corresponding descriptions.
+ */
 public enum StatusCodeLookup {
-    // 1xx: Informational responses
+    /* 1xx: Informational responses */
     CONTINUE(100, "Continue"),
     SWITCHING_PROTOCOLS(101, "Switching Protocols"),
     PROCESSING(102, "Processing"),
     EARLY_HINTS(103, "Early Hints"),
 
-    // 2xx: Successful responses
+    /* 2xx: Successful responses */
     OK(200, "OK"),
     CREATED(201, "Created"),
     ACCEPTED(202, "Accepted"),
@@ -22,7 +25,7 @@ public enum StatusCodeLookup {
     ALREADY_REPORTED(208, "Already Reported"),
     IM_USED(226, "IM Used"),
 
-    // 3xx: Redirection messages
+    /* 3xx: Redirection messages */
     MULTIPLE_CHOICES(300, "Multiple Choices"),
     MOVED_PERMANENTLY(301, "Moved Permanently"),
     FOUND(302, "Found"),
@@ -32,7 +35,7 @@ public enum StatusCodeLookup {
     TEMPORARY_REDIRECT(307, "Temporary Redirect"),
     PERMANENT_REDIRECT(308, "Permanent Redirect"),
 
-    // 4xx: Client error responses
+    /* 4xx: Client error responses */
     BAD_REQUEST(400, "Bad Request"),
     UNAUTHORIZED(401, "Unauthorized"),
     PAYMENT_REQUIRED(402, "Payment Required"),
@@ -62,7 +65,7 @@ public enum StatusCodeLookup {
     REQUEST_HEADER_FIELDS_TOO_LARGE(431, "Request Header Fields Too Large"),
     UNAVAILABLE_FOR_LEGAL_REASONS(451, "Unavailable For Legal Reasons"),
 
-    // 5xx: Server error responses
+    /* 5xx: Server error responses */
     INTERNAL_SERVER_ERROR(500, "Internal Server Error"),
     NOT_IMPLEMENTED(501, "Not Implemented"),
     BAD_GATEWAY(502, "Bad Gateway"),
@@ -78,7 +81,7 @@ public enum StatusCodeLookup {
     private final int code;
     private final String description;
 
-    // Map for quick lookup
+    /* Map for quick lookup */
     private static final Map<Integer, String> CODE_TO_DESCRIPTION = new HashMap<>();
 
     static {

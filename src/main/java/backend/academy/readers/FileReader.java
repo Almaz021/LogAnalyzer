@@ -14,6 +14,12 @@ import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
+/**
+ * A file reader implementation of {@link LogReader} for reading log files.
+ * <p>
+ * This class reads files from a directory using a glob pattern, processes them,
+ * and streams their content line by line.
+ */
 @Log4j2
 @RequiredArgsConstructor
 public class FileReader implements LogReader {
@@ -34,6 +40,9 @@ public class FileReader implements LogReader {
         return readFile(baseDirectory, matcher);
     }
 
+    /**
+     * Splits the input file path into a base directory path and a glob pattern.
+     */
     private String[] createBasePathAndGlob(String filePath) {
         StringBuilder currLine = new StringBuilder();
         StringBuilder basePath = new StringBuilder();
@@ -62,6 +71,9 @@ public class FileReader implements LogReader {
         return new String[] {basePath.toString(), globPattern};
     }
 
+    /**
+     * Resolves the base directory path from a relative or absolute path.
+     */
     @SuppressFBWarnings("PATH_TRAVERSAL_IN")
     private Path resolveBasePath(String basePath) {
         Path path = Paths.get(basePath);
@@ -72,6 +84,11 @@ public class FileReader implements LogReader {
         return Paths.get(System.getProperty("user.dir"), basePath).normalize();
     }
 
+    /**
+     * Reads files in the base directory that match the specified glob pattern.
+     * <p>
+     * Adds the file names to the {@link DataProcessorService} for further processing.
+     */
     private Stream<String> readFile(Path baseDirectory, PathMatcher matcher) throws IOException {
         try (Stream<Path> stream = Files.walk(baseDirectory)) {
             List<Path> foundFiles = stream
