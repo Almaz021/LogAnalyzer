@@ -26,10 +26,18 @@ public class LogReport {
     private Map<String, Integer> requestTypeCount = new HashMap<>();
 
     public BigDecimal getAverageRequestSize() {
-        return sumRequestSize.divide(new BigDecimal(requestCount), RoundingMode.FLOOR);
+        if (requestCount != 0) {
+            return sumRequestSize.divide(new BigDecimal(requestCount), RoundingMode.FLOOR);
+        } else {
+            return BigDecimal.ZERO;
+        }
     }
 
     public Double getPercentile() {
-        return Quantiles.percentiles().index(PERCENTILE_95).compute(allRequestSize);
+        if (!allRequestSize.isEmpty()) {
+            return Quantiles.percentiles().index(PERCENTILE_95).compute(allRequestSize);
+        } else {
+            return 0D;
+        }
     }
 }
