@@ -52,17 +52,20 @@ public class StartService {
         readLogs();
 
         FileWriter writer;
+        String savedTo = "Saved to: %s";
         if ("markdown".equals(format)) {
             writer = new MarkdownFileWriter();
             writer.writeFile(Settings.RESULT_MARKDOWN_PATH, report);
+            log.info(savedTo.formatted(Settings.RESULT_MARKDOWN_PATH));
         } else if ("adoc".equals(format)) {
             writer = new AdocFileWriter();
             writer.writeFile(Settings.RESULT_ADOC_PATH, report);
+            log.info(savedTo.formatted(Settings.RESULT_ADOC_PATH));
         } else {
             writer = new MarkdownFileWriter();
             writer.writeFile(Settings.RESULT_MARKDOWN_PATH, report);
+            log.info(savedTo.formatted(Settings.RESULT_MARKDOWN_PATH));
         }
-        log.info("Saved to: %s".formatted(Settings.RESULT_MARKDOWN_PATH));
     }
 
     /**
